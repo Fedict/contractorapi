@@ -25,22 +25,42 @@
  */
 package be.fedict.demo.contractorapi;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import static io.restassured.RestAssured.given;
+import org.eclipse.jetty.server.Response;
+import static org.hamcrest.CoreMatchers.is;
 
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import org.junit.jupiter.api.Test;
+
 
 /**
  *
  * @author Bart Hanssens
  */
-@RegisterRestClient
-public interface ContractorSearch {
-	@POST
-	@Path("/weblists/dataDisplay.xhtml")
-	@Produces(MediaType.TEXT_HTML)
-	public ContractorDAO getContractorById(@FormParam("mainForm:crit1465:crit767") String id);
+@QuarkusTest
+@QuarkusTestResource(WiremockContractors.class)
+public class ContractorResourceTest  {
+
+	@Test
+	public void testFound() {
+		given()
+			.when().get("/contractor/0123.456.789")
+			.then().statusCode(Response.SC_OK)
+					.body("$.size()", is(1));
+	}
+
+	@Test
+	public void testNotFound() {
+		given()
+			.when().get("/contractor/0000.000.000")
+			.then().statusCode(Response.SC_NOT_FOUND);
+	}
+	
+	@Test
+	public void testFailure() {
+		given()
+			.when().get("/contractor/987")
+			.then().statusCode(Response.SC_INTERNAL_SERVER_ERROR);
+	}	
 }

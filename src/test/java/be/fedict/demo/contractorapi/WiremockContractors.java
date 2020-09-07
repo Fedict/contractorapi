@@ -26,15 +26,23 @@
 package be.fedict.demo.contractorapi;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
+import com.github.tomakehurst.wiremock.matching.ContainsPattern;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -43,19 +51,35 @@ import java.util.Map;
 public class WiremockContractors implements QuarkusTestResourceLifecycleManager {
 	private WireMockServer server;	
 
+	private String getAsString(String name) {
+		try {
+			return IOUtils.toString(
+				WiremockContractors.class.getClassLoader().getResourceAsStream(name), StandardCharsets.UTF_8);
+		} catch (IOException ex) {
+			return "";
+		}
+	}
+
 	@Override
 	public Map<String, String> start() {
 		server = new WireMockServer();
 		server.start();
-		IOUtils.
+
 		stubFor(post("/weblists/dataDisplay.xhtml")
-					.withQueryParam("mainForm:crit1465:crit767", new EqualToPattern("0123.456.789"))
-					.willReturn(
-						ok("<html><body><table>"
-							+ "<thead></thead>"
-							+ "<tbody></tbody>"
-							+ "</table></body></html>")
-					)
+					.withRequestBody(new ContainsPattern("0123456789"))
+					.willReturn(ok(getAsString("found.html"))
+									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
+		);
+
+		stubFor(post("/weblists/dataDisplay.xhtml")
+					.withRequestBody(new ContainsPattern("000000000"))
+					.willReturn(ok(getAsString("notfound.html"))
+									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
+		);
+
+		stubFor(post("/weblists/dataDisplay.xhtml")
+					.withRequestBody(new ContainsPattern("987"))
+					.willReturn(badRequest())
 		);
 
 		return Collections.singletonMap("be.fedict.demo.contractorapi.ContractorSearch/mp-rest/url", server.baseUrl());
