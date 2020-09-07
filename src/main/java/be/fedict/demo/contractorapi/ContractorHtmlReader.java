@@ -103,7 +103,7 @@ public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 		if (table == null) {
 			throw new WebApplicationException("No results table found", Response.Status.INTERNAL_SERVER_ERROR);
 		}
-		Elements headrow = table.select("theader tr");
+		Elements headrow = table.select("thead tr");
 		if (headrow == null || headrow.size() != 1) {
 			throw new WebApplicationException("No header row", Response.Status.INTERNAL_SERVER_ERROR);
 		}

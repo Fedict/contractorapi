@@ -58,9 +58,9 @@ public class ContractorResourceTest  {
 	}
 	
 	@Test
-	public void testFailure() {
+	public void testBadRequest() {
 		given()
 			.when().get("/contractor/987")
-			.then().statusCode(Response.SC_INTERNAL_SERVER_ERROR);
+			.then().statusCode(Response.SC_BAD_REQUEST);
 	}	
 }
