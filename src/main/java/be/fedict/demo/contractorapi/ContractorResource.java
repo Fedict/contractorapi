@@ -26,14 +26,29 @@
 package be.fedict.demo.contractorapi;
 
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 /**
- *
+ * Main entry for the API
+ * 
  * @author Bart Hanssens
  */
-public class Main {
+@Path("/contractor")
+@Produces(MediaType.APPLICATION_JSON)
+public class ContractorResource {
 	@Inject
     @RestClient
 	ContractorSearch search;
+	
+	@GET
+	@Path("/{id}")
+	public ContractorDAO getContractorById(@PathParam("id") String str) {
+        return search.getContractorById(str.replaceAll("\\D", ""));
+    }
+
 }

@@ -33,7 +33,7 @@ import java.util.Map;
  * 
  * @author Bart Hanssens
  */
-public class Contractor {
+public class ContractorDAO {
 	private String cbeId;
 	private String vatId;
 	private String name;

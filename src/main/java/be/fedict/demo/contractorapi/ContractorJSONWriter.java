@@ -25,22 +25,40 @@
  */
 package be.fedict.demo.contractorapi;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
 
 /**
- *
+ * Converts ContractorDAO object to JSON
+ * 
  * @author Bart Hanssens
  */
-@RegisterRestClient
-public interface ContractorSearch {
-	@GET
-	@Path("/weblists/dataDisplay.xhtml")
-	@Produces(MediaType.TEXT_HTML)
-	public ContractorDAO getContractorById(@QueryParam("mainForm:crit1465:crit767") String id);
+@Provider
+@Consumes(MediaType.TEXT_HTML)
+public class ContractorJSONWriter implements MessageBodyWriter<ContractorDAO> {
+	@Override
+	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] antns, MediaType mt) {
+		return false;
+	}
+
+	@Override
+	public void writeTo(ContractorDAO t, Class<?> type, Type genericType, Annotation[] antns, MediaType mt, MultivaluedMap<String, Object> mm, OutputStream out) throws IOException, WebApplicationException {
+	}
+	
 }

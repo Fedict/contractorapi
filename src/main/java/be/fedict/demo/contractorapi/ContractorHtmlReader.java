@@ -50,14 +50,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
- * Parse HTML result page and convert it into a Contractor object
+ * Parse HTML result page and convert it into a ContractorDAO object
  * 
  * @author Bart Hanssens
  * @see <a href="https://economie.fgov.be/nl/themas/ondernemingen/specifieke-sectoren/kwaliteit-de-bouw/erkenning-van-aannemers">erkenning van aannemers website</a>
  */
 @Provider
 @Consumes(MediaType.TEXT_HTML)
-public class ContractorHtmlReader implements MessageBodyReader<Contractor> {
+public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 	private static final String BASEURL = "https://economie.fgov.be/";
 	private static final String TABLE_RESULT = "mainForm:dataTab_data";
 	private static final String HEADERS = "KBO nummer,BTW nummer,aannemer,Erkenningsnummer,straat,Postcode,Gemeente,Beslissingsdatum,vervaldatum,categorie klassen";
@@ -65,11 +65,11 @@ public class ContractorHtmlReader implements MessageBodyReader<Contractor> {
 
 	@Override
 	public boolean isReadable(Class<?> type, Type genericType, Annotation[] antns, MediaType mt) {
-		return genericType.equals(Contractor.class);
+		return genericType.equals(ContractorDAO.class);
 	}
 
 	@Override
-	public Contractor readFrom(Class<Contractor> type, Type genericType, Annotation[] antns, MediaType mt, MultivaluedMap<String, String> mm, InputStream in) throws IOException, WebApplicationException {
+	public ContractorDAO readFrom(Class<ContractorDAO> type, Type genericType, Annotation[] antns, MediaType mt, MultivaluedMap<String, String> mm, InputStream in) throws IOException, WebApplicationException {
 		return parseOrganization(in);
 	}
 	
@@ -95,8 +95,8 @@ public class ContractorHtmlReader implements MessageBodyReader<Contractor> {
 	 * @return
 	 * @throws IOException 
 	 */
-	private Contractor parseOrganization(InputStream in) throws IOException {
-		Contractor contractor = new Contractor();
+	private ContractorDAO parseOrganization(InputStream in) throws IOException {
+		ContractorDAO contractor = new ContractorDAO();
 
 		Document doc = Jsoup.parse(in, StandardCharsets.UTF_8.toString(), BASEURL);
 		Element table = doc.getElementById(TABLE_RESULT);

@@ -25,22 +25,46 @@
  */
 package be.fedict.demo.contractorapi;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  *
  * @author Bart Hanssens
  */
-@RegisterRestClient
-public interface ContractorSearch {
-	@GET
-	@Path("/weblists/dataDisplay.xhtml")
-	@Produces(MediaType.TEXT_HTML)
-	public ContractorDAO getContractorById(@QueryParam("mainForm:crit1465:crit767") String id);
+public class WiremockContractors implements QuarkusTestResourceLifecycleManager {
+	private WireMockServer server;	
+
+	@Override
+	public Map<String, String> start() {
+		server = new WireMockServer();
+		server.start();
+		IOUtils.
+		stubFor(post("/weblists/dataDisplay.xhtml")
+					.withQueryParam("mainForm:crit1465:crit767", new EqualToPattern("0123.456.789"))
+					.willReturn(
+						ok("<html><body><table>"
+							+ "<thead></thead>"
+							+ "<tbody></tbody>"
+							+ "</table></body></html>")
+					)
+		);
+
+		return Collections.singletonMap("be.fedict.demo.contractorapi.ContractorSearch/mp-rest/url", server.baseUrl());
+	}
+
+	@Override
+	public void stop() {
+		if (server != null) {
+			server.stop();
+		}
+	}
 }
