@@ -26,7 +26,6 @@
 package be.fedict.demo.contractorapi;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
 import com.github.tomakehurst.wiremock.matching.ContainsPattern;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;

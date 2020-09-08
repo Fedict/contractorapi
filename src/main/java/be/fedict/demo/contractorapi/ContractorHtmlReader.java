@@ -37,10 +37,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 
@@ -95,33 +95,33 @@ public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 	 * @return
 	 * @throws IOException 
 	 */
-	private ContractorDAO parseOrganization(InputStream in) throws IOException {
+	private ContractorDAO parseOrganization(InputStream in) throws IOException, WebApplicationException {
 		ContractorDAO contractor = new ContractorDAO();
 
 		Document doc = Jsoup.parse(in, StandardCharsets.UTF_8.toString(), BASEURL);
 		
 		Elements headrow = doc.select("thead[id='mainForm:dataTab_head'] tr");
 		if (headrow == null || headrow.size() != 1) {
-			throw new WebApplicationException("No header row", Response.Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException("No header row");
 		}
 		Elements headers = headrow.select("th");
 		if (headers == null || headers.isEmpty()) {
-			throw new WebApplicationException("No headers in table", Response.Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException("No headers in table");
 		}
 		String collected = headers.stream().map(Element::text).collect(Collectors.joining(","));
 		if (HEADERS.compareToIgnoreCase(collected) != 0) {
-			throw new WebApplicationException("Unknown headers", Response.Status.INTERNAL_SERVER_ERROR);			
+			throw new WebApplicationException("Unknown headers");			
 		}
 
 		Elements rows = doc.select("tbody[id='mainForm:dataTab_data'] tr");
 		if (rows == null || rows.size() != 1) {
-			throw new WebApplicationException("Expected exactly 1 result", Response.Status.NOT_FOUND);
+			throw new NotFoundException("Expected exactly 1 result");
 		}
 
 		Element row = rows.first();
 		Elements columns = row.getElementsByTag("td");
 		if (columns == null || columns.size() != 10) {
-			throw new WebApplicationException("Expected 10 columns in result", Response.Status.INTERNAL_SERVER_ERROR);			
+			throw new WebApplicationException("Expected 10 columns in result");			
 		}
 		contractor.setCbeId(columns.get(0).text());
 		contractor.setVatId(columns.get(1).text());

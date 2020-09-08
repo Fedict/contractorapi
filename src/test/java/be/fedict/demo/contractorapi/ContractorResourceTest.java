@@ -29,7 +29,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import static io.restassured.RestAssured.given;
 import org.eclipse.jetty.server.Response;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +47,7 @@ public class ContractorResourceTest  {
 		given()
 			.when().get("/contractor/0123.456.789")
 			.then().statusCode(Response.SC_OK)
-					.body("$.size()", is(1));
+					.body("municipality", equalTo("Brussel"));
 	}
 
 	@Test

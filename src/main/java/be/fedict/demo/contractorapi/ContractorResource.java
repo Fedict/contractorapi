@@ -33,6 +33,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 /**
@@ -49,6 +54,12 @@ public class ContractorResource {
 	
 	@GET
 	@Path("/{id}")
+	@Operation(summary = "Get contractor", description = "Get one contractor by ID")
+	@APIResponses(value = {
+		@APIResponse(responseCode = "200", description = "Success"),
+		@APIResponse(responseCode = "404", description = "Not Found"),
+		@APIResponse(responseCode = "500", description = "Other error")
+	})
 	public ContractorDAO getContractorById(@PathParam("id") String str) {
 		String id = str.replaceAll("\\D", "");
 		if (id.isEmpty() || id.length() < 9) {
