@@ -67,13 +67,13 @@ public class WiremockContractors implements QuarkusTestResourceLifecycleManager 
 
 		stubFor(post("/weblists/dataDisplay.xhtml")
 					.withRequestBody(new ContainsPattern("0123456789"))
-					.willReturn(ok(getAsString("found.html"))
+					.willReturn(ok(getAsString("/found.html"))
 									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
 		);
 
 		stubFor(post("/weblists/dataDisplay.xhtml")
 					.withRequestBody(new ContainsPattern("000000000"))
-					.willReturn(ok(getAsString("notfound.html"))
+					.willReturn(ok(getAsString("/notfound.html"))
 									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
 		);
 

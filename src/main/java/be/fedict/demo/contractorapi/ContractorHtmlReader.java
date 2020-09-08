@@ -99,30 +99,26 @@ public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 		ContractorDAO contractor = new ContractorDAO();
 
 		Document doc = Jsoup.parse(in, StandardCharsets.UTF_8.toString(), BASEURL);
-		Element table = doc.getElementById(TABLE_RESULT);
-		if (table == null) {
-			throw new WebApplicationException("No results table found", Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		Elements headrow = table.select("thead tr");
+		
+		Elements headrow = doc.select("thead[id='mainForm:dataTab_head'] tr");
 		if (headrow == null || headrow.size() != 1) {
 			throw new WebApplicationException("No header row", Response.Status.INTERNAL_SERVER_ERROR);
 		}
 		Elements headers = headrow.select("th");
-		if (headers == null) {
+		if (headers == null || headers.isEmpty()) {
 			throw new WebApplicationException("No headers in table", Response.Status.INTERNAL_SERVER_ERROR);
 		}
-		Elements tds = headers.first().select("td");
-		String collected = tds.stream().map(Element::text).collect(Collectors.joining(","));
+		String collected = headers.stream().map(Element::text).collect(Collectors.joining(","));
 		if (HEADERS.compareToIgnoreCase(collected) != 0) {
 			throw new WebApplicationException("Unknown headers", Response.Status.INTERNAL_SERVER_ERROR);			
 		}
 
-		Elements rows = table.select("tbody tr");
+		Elements rows = doc.select("tbody[id='mainForm:dataTab_data'] tr");
 		if (rows == null || rows.size() != 1) {
 			throw new WebApplicationException("Expected exactly 1 result", Response.Status.NOT_FOUND);
 		}
 
-		Element row = table.select("tr").first();
+		Element row = rows.first();
 		Elements columns = row.getElementsByTag("td");
 		if (columns == null || columns.size() != 10) {
 			throw new WebApplicationException("Expected 10 columns in result", Response.Status.INTERNAL_SERVER_ERROR);			
