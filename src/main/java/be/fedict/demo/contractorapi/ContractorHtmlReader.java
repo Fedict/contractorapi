@@ -25,6 +25,7 @@
  */
 package be.fedict.demo.contractorapi;
 
+import be.fedict.demo.contractorapi.helper.ContractorDAO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -114,7 +115,6 @@ public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 
 		Elements rows = doc.select("tbody[id='mainForm:dataTab_data'] tr");
 		if (rows == null || rows.size() != 1) {
-			//return null;
 			throw new NotFoundException("Expected exactly 1 result");
 		}
 

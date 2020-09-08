@@ -25,6 +25,7 @@
  */
 package be.fedict.demo.contractorapi;
 
+import be.fedict.demo.contractorapi.helper.ContractorDAO;
 import javax.inject.Singleton;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;

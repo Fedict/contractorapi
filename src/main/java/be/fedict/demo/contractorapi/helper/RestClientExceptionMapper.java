@@ -23,49 +23,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package be.fedict.demo.contractorapi;
+package be.fedict.demo.contractorapi.helper;
 
-import be.fedict.demo.contractorapi.helper.ContractorDAO;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
-import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
- * Main entry for the API
+ * Helper class to make sure that error status of injected restclient is correctly
  * 
- * @author Bart Hanssens
+ * @author Bart.Hanssens
  */
-@Path("/contractor")
-@Produces(MediaType.APPLICATION_JSON)
-public class ContractorResource {
-	@Inject
-    @RestClient
-	ContractorSearch search;
-	
-	@GET
-	@Path("/{id}")
-	@Operation(summary = "Get contractor", description = "Get one contractor by ID")
-	@APIResponses(value = {
-		@APIResponse(responseCode = "200", description = "Success"),
-		@APIResponse(responseCode = "404", description = "Not Found"),
-		@APIResponse(responseCode = "500", description = "Other error")
-	})
-	public ContractorDAO getContractorById(@PathParam("id") String str) {
-		String id = str.replaceAll("\\D", "");
-		if (id.isEmpty() || id.length() < 9) {
-			throw new WebApplicationException("ID too short", Response.Status.BAD_REQUEST);
+@Provider
+public class RestClientExceptionMapper implements ExceptionMapper<ProcessingException> {
+	@Override
+	public Response toResponse(ProcessingException e) {
+		if (e.getCause() instanceof NotFoundException) {
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
 		}
-
-		return search.getContractorById(str.replaceAll("\\D", ""));
-    }
+		return Response.serverError().entity(e.getMessage()).build();
+	}
 }

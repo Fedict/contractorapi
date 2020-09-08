@@ -102,4 +102,6 @@
 			<scope>test</scope>
 		</dependency>
     </dependencies>
+    <name>Contractor API</name>
+    <description>Demo on converting the contractor search page into an API. </description>
 </project>
