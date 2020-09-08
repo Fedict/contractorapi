@@ -59,7 +59,6 @@ import org.jsoup.select.Elements;
 @Consumes(MediaType.TEXT_HTML)
 public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 	private static final String BASEURL = "https://economie.fgov.be/";
-	private static final String TABLE_RESULT = "mainForm:dataTab_data";
 	private static final String HEADERS = "KBO nummer,BTW nummer,aannemer,Erkenningsnummer,straat,Postcode,Gemeente,Beslissingsdatum,vervaldatum,categorie klassen";
 	private static final Pattern CLASSCATS = Pattern.compile("([A-Z]\\d{0,2}) \\((\\d)\\) ?");
 
@@ -115,6 +114,7 @@ public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 
 		Elements rows = doc.select("tbody[id='mainForm:dataTab_data'] tr");
 		if (rows == null || rows.size() != 1) {
+			//return null;
 			throw new NotFoundException("Expected exactly 1 result");
 		}
 

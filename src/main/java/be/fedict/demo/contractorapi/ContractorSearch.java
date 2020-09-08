@@ -25,6 +25,7 @@
  */
 package be.fedict.demo.contractorapi;
 
+import javax.inject.Singleton;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -37,7 +38,8 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
  *
  * @author Bart Hanssens
  */
-@RegisterRestClient
+@Singleton
+@RegisterRestClient(baseUri = "https://weblists.economie.fgov.be")
 public interface ContractorSearch {
 	@POST
 	@Path("/weblists/dataDisplay.xhtml")

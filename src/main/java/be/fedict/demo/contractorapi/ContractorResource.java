@@ -27,6 +27,7 @@ package be.fedict.demo.contractorapi;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -34,8 +35,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -65,7 +64,11 @@ public class ContractorResource {
 		if (id.isEmpty() || id.length() < 9) {
 			throw new WebApplicationException("ID too short", Response.Status.BAD_REQUEST);
 		}
-        return search.getContractorById(str.replaceAll("\\D", ""));
-    }
 
+		ContractorDAO dao = search.getContractorById(str.replaceAll("\\D", ""));
+		if (dao == null) {
+			throw new NotFoundException("Not found");
+		}
+		return dao;
+    }
 }
