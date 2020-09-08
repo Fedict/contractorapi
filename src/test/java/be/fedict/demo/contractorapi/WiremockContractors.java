@@ -64,19 +64,20 @@ public class WiremockContractors implements QuarkusTestResourceLifecycleManager 
 		server = new WireMockServer();
 		server.start();
 
-		stubFor(post("/weblists/dataDisplay.xhtml")
+		String path = "/weblists/dataDisplay.xhtml?app=5&list=8&lang=NL";
+		stubFor(post(path)
 					.withRequestBody(new ContainsPattern("0123456789"))
 					.willReturn(ok(getAsString("/found.html"))
 									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
 		);
 
-		stubFor(post("/weblists/dataDisplay.xhtml")
+		stubFor(post(path)
 					.withRequestBody(new ContainsPattern("000000000"))
 					.willReturn(ok(getAsString("/notfound.html"))
 									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
 		);
 
-		stubFor(post("/weblists/dataDisplay.xhtml")
+		stubFor(post(path)
 					.withRequestBody(new ContainsPattern("987"))
 					.willReturn(badRequest())
 		);

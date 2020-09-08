@@ -66,6 +66,6 @@ public class ContractorResource {
 			throw new WebApplicationException("ID too short", Response.Status.BAD_REQUEST);
 		}
 
-		return search.getContractorById(str.replaceAll("\\D", ""));
+		return search.getContractorById(str.replaceAll("\\D", ""), "5", "8", "NL");
     }
 }

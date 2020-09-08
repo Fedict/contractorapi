@@ -26,11 +26,15 @@
 package be.fedict.demo.contractorapi;
 
 import be.fedict.demo.contractorapi.helper.ContractorDAO;
+import java.util.Optional;
 import javax.inject.Singleton;
+
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -43,7 +47,8 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @RegisterRestClient(baseUri = "https://weblists.economie.fgov.be")
 public interface ContractorSearch {
 	@POST
-	@Path("/weblists/dataDisplay.xhtml")
+	@Path(value="/weblists/dataDisplay.xhtml")
 	@Produces(MediaType.TEXT_HTML)
-	public ContractorDAO getContractorById(@FormParam("mainForm:crit1465:crit767") String id);
+	public ContractorDAO getContractorById(@FormParam("mainForm:crit1465:crit767") String id,
+			@QueryParam("app") String app, @QueryParam("list") String list, @QueryParam("lang") String lang);
 }
