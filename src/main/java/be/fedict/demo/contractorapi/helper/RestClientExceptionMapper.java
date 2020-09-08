@@ -25,6 +25,8 @@
  */
 package be.fedict.demo.contractorapi.helper;
 
+import java.util.Collections;
+import java.util.Map;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
@@ -40,9 +42,10 @@ import javax.ws.rs.ext.Provider;
 public class RestClientExceptionMapper implements ExceptionMapper<ProcessingException> {
 	@Override
 	public Response toResponse(ProcessingException e) {
+		Map error = Collections.singletonMap("error", e.getCause().getMessage());
 		if (e.getCause() instanceof NotFoundException) {
-			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+			return Response.status(Response.Status.NOT_FOUND).entity(error).build();
 		}
-		return Response.serverError().entity(e.getMessage()).build();
+		return Response.serverError().entity(error).build();
 	}
 }
