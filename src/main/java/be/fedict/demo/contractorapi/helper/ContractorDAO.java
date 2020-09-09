@@ -25,6 +25,9 @@
  */
 package be.fedict.demo.contractorapi.helper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +37,8 @@ import java.util.Map;
  * @author Bart Hanssens
  */
 public class ContractorDAO {
+	private final static SimpleDateFormat FMT = new SimpleDateFormat("yyyy-MM-dd");
+	
 	private String cbeId;
 	private String vatId;
 	private String name;
@@ -41,8 +46,8 @@ public class ContractorDAO {
 	private String street;
 	private String postalCode;
 	private String municipality;
-	private String fromDate;
-	private String tillDate;
+	private Date fromDate;
+	private Date tillDate;
 	private Map<String,String> catClasses = new HashMap<>();
 	
 	public String getCbeId() {
@@ -101,20 +106,24 @@ public class ContractorDAO {
 		this.municipality = municipality;
 	}
 
-	public String getFromDate() {
+	public Date getFromDate() {
 		return fromDate;
 	}
 
-	public void setFromDate(String fromDate) {
-		this.fromDate = fromDate;
+	public void setFromDate(String fromDate) throws ParseException {
+		if (fromDate != null && !fromDate.isEmpty()) {
+			this.fromDate = FMT.parse(fromDate);
+		}
 	}
 
-	public String getTillDate() {
+	public Date getTillDate() {
 		return tillDate;
 	}
 
-	public void setTillDate(String tillDate) {
-		this.tillDate = tillDate;
+	public void setTillDate(String tillDate) throws ParseException {
+		if (tillDate != null && !tillDate.isEmpty()) {
+			this.tillDate = FMT.parse(tillDate);
+		}
 	}
 
 	public Map<String, String> getCatClasses() {

@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -48,6 +49,7 @@ import javax.ws.rs.ext.Provider;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 /**
@@ -57,9 +59,8 @@ import org.jsoup.select.Elements;
  * @see <a href="https://economie.fgov.be/nl/themas/ondernemingen/specifieke-sectoren/kwaliteit-de-bouw/erkenning-van-aannemers">erkenning van aannemers website</a>
  */
 @Provider
-@Consumes(MediaType.TEXT_HTML)
-public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
-	private static final String BASEURL = "https://economie.fgov.be/";
+@Consumes(MediaType.TEXT_XML)
+public class SearchResultReader implements MessageBodyReader<ContractorDAO> {
 	private static final String HEADERS = "KBO nummer,BTW nummer,aannemer,Erkenningsnummer,straat,Postcode,Gemeente,Beslissingsdatum,vervaldatum,categorie klassen";
 	private static final Pattern CLASSCATS = Pattern.compile("([A-Z]\\d{0,2}) \\((\\d)\\) ?");
 
@@ -69,7 +70,8 @@ public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 	}
 
 	@Override
-	public ContractorDAO readFrom(Class<ContractorDAO> type, Type genericType, Annotation[] antns, MediaType mt, MultivaluedMap<String, String> mm, InputStream in) throws IOException, WebApplicationException {
+	public ContractorDAO readFrom(Class<ContractorDAO> type, Type genericType, Annotation[] antns, MediaType mt, 
+									MultivaluedMap<String, String> headers, InputStream in) throws IOException, WebApplicationException {
 		return parseOrganization(in);
 	}
 	
@@ -98,16 +100,27 @@ public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 	private ContractorDAO parseOrganization(InputStream in) throws IOException, WebApplicationException {
 		ContractorDAO contractor = new ContractorDAO();
 
-		Document doc = Jsoup.parse(in, StandardCharsets.UTF_8.toString(), BASEURL);
+		Document xmlDoc = Jsoup.parse(in, StandardCharsets.UTF_8.toString(), "", Parser.xmlParser());
+		if (xmlDoc == null) {
+			throw new WebApplicationException("Could not process XML result");
+		}
+
+		Elements updates = xmlDoc.select("update");
+		if (updates == null || updates.isEmpty()){
+			throw new WebApplicationException("No update found");
+		}
+		String cdata = updates.first().text();
+		Document doc = Jsoup.parse(cdata);
 		
 		Elements headrow = doc.select("thead[id='mainForm:dataTab_head'] tr");
 		if (headrow == null || headrow.size() != 1) {
 			throw new WebApplicationException("No header row");
 		}
-		Elements headers = headrow.select("th");
+		Elements headers = headrow.select("th span[class='ui-column-title']");
 		if (headers == null || headers.isEmpty()) {
 			throw new WebApplicationException("No headers in table");
 		}
+
 		String collected = headers.stream().map(Element::text).collect(Collectors.joining(","));
 		if (HEADERS.compareToIgnoreCase(collected) != 0) {
 			throw new WebApplicationException("Unknown headers");			
@@ -123,15 +136,19 @@ public class ContractorHtmlReader implements MessageBodyReader<ContractorDAO> {
 		if (columns == null || columns.size() != 10) {
 			throw new WebApplicationException("Expected 10 columns in result");			
 		}
-		contractor.setCbeId(columns.get(0).text());
+		contractor.setCbeId(columns.get(0).text().replace("ui-button", ""));
 		contractor.setVatId(columns.get(1).text());
 		contractor.setName(columns.get(2).text());
 		contractor.setLicenseNo(columns.get(3).text());
 		contractor.setStreet(columns.get(4).text());
 		contractor.setPostalCode(columns.get(5).text());
 		contractor.setMunicipality(columns.get(6).text());
-		contractor.setFromDate(columns.get(7).text());
-		contractor.setTillDate(columns.get(8).text());
+		try {
+			contractor.setFromDate(columns.get(7).text());
+			contractor.setTillDate(columns.get(8).text());
+		} catch (ParseException pe) {
+			throw new WebApplicationException("Error parsing date");
+		}
 		contractor.setCatClasses(mapToClassCats(columns.get(9).text()));
 
 		return contractor;

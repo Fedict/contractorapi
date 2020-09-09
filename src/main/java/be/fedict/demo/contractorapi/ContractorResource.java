@@ -26,15 +26,18 @@
 package be.fedict.demo.contractorapi;
 
 import be.fedict.demo.contractorapi.helper.ContractorDAO;
+import be.fedict.demo.contractorapi.helper.FormDAO;
+
 import javax.inject.Inject;
+
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
@@ -50,7 +53,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 public class ContractorResource {
 	@Inject
     @RestClient
-	ContractorSearch search;
+	Search search;
 	
 	@GET
 	@Path("/{id}")
@@ -62,10 +65,14 @@ public class ContractorResource {
 	})
 	public ContractorDAO getContractorById(@PathParam("id") String str) {
 		String id = str.replaceAll("\\D", "");
+
 		if (id.isEmpty() || id.length() < 9) {
 			throw new WebApplicationException("ID too short", Response.Status.BAD_REQUEST);
 		}
 
-		return search.getContractorById(str.replaceAll("\\D", ""), "5", "8", "NL");
+		FormDAO form = search.getSearchForm(5, 8, "NL");
+		return search.getContractorById(str.replaceAll("\\D", ""), form.getViewState(), 
+				form.getCookies().get("JSESSIONID"), form.getCookies().get("MY_SESSION"),
+				true, "mainForm:searchButton", "@all", "mainForm:dataTab","mainForm:searchButton", 1);
     }
 }

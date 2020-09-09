@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Contractor API Demo - Found</title>
-		<meta charset="UTF-8">
-	</head>
-	<body>
-		<table>
-			<thead id="mainForm:dataTab_head">
+<?xml version="1.0" encoding="UTF-8"?>
+<partial-response><changes><update id="mainForm:dataTab">
+<![CDATA[<thead id="mainForm:dataTab_head">
 				<tr>
 					<th>KBO nummer</th>
 					<th>BTW nummer</th>
@@ -34,6 +28,4 @@
 					<td>A (2)</td>
 				</tr>
 			</tbody>
-		</table>
-	</body>
-</html>
+]]></update></changes></partial-response>

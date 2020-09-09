@@ -26,16 +26,23 @@
 package be.fedict.demo.contractorapi;
 
 import be.fedict.demo.contractorapi.helper.ContractorDAO;
-import java.util.Optional;
-import javax.inject.Singleton;
+import be.fedict.demo.contractorapi.helper.FormDAO;
+import java.util.List;
 
+import javax.inject.Singleton;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.DefaultValue;
+
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
+import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
@@ -45,10 +52,25 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
  */
 @Singleton
 @RegisterRestClient(baseUri = "https://weblists.economie.fgov.be")
-public interface ContractorSearch {
-	@POST
-	@Path(value="/weblists/dataDisplay.xhtml")
+
+public interface Search {
+	@GET
+	@Path("/weblists/dataDisplay.xhtml")
 	@Produces(MediaType.TEXT_HTML)
+	public FormDAO getSearchForm(@QueryParam("app") int app, @QueryParam("list") int lst, @QueryParam("lang") String lang);
+
+	@POST
+	@Path("/weblists/dataDisplay.xhtml")
+	@Produces(MediaType.TEXT_HTML)
+	@ClientHeaderParam(name="Faces-Request", value="partial/ajax")
 	public ContractorDAO getContractorById(@FormParam("mainForm:crit1465:crit767") String id,
-			@QueryParam("app") String app, @QueryParam("list") String list, @QueryParam("lang") String lang);
+											@FormParam("javax.faces.ViewState") String viewState,
+											@CookieParam("JSESSIONID") Cookie cookieJS,
+											@CookieParam("MY_SESSION") Cookie cookieMS,
+											@FormParam("javax.faces.partial.ajax") boolean partial,
+											@FormParam("javax.faces.source") String source,
+											@FormParam("javax.faces.partial.execute") String exec,
+											@FormParam("javax.faces.partial.render") String render,
+											@FormParam("mainForm:searchButton") String button,
+											@FormParam("mainForm_SUBMIT") int submit);
 }
