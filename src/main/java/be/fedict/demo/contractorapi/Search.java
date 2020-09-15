@@ -27,13 +27,9 @@ package be.fedict.demo.contractorapi;
 
 import be.fedict.demo.contractorapi.helper.ContractorDAO;
 import be.fedict.demo.contractorapi.helper.FormDAO;
-import java.util.List;
 
 import javax.inject.Singleton;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.DefaultValue;
-
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -42,17 +38,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
-import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
 
+import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 /**
- *
+ * HTTP client sending the request to the webform
+ * 
  * @author Bart Hanssens
  */
 @Singleton
 @RegisterRestClient(baseUri = "https://weblists.economie.fgov.be")
-
 public interface Search {
 	@GET
 	@Path("/weblists/dataDisplay.xhtml")

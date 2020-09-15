@@ -27,6 +27,7 @@ package be.fedict.demo.contractorapi.helper;
 
 import java.util.Collections;
 import java.util.Map;
+
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
@@ -34,7 +35,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
- * Helper class to make sure that error status of injected restclient is correctly
+ * Helper class to forward the error status of restclient (connected to webform) to front API
  * 
  * @author Bart.Hanssens
  */

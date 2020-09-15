@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Helper object for contractor data
+ * Helper class for contractor data
  * 
  * @author Bart Hanssens
  */

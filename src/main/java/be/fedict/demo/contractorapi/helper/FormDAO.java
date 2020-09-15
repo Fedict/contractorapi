@@ -25,12 +25,11 @@
  */
 package be.fedict.demo.contractorapi.helper;
 
-import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Cookie;
 
 /**
- * Helper object for search form
+ * Helper class for search form
  * 
  * @author Bart Hanssens
  */

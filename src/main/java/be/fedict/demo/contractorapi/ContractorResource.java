@@ -57,19 +57,21 @@ public class ContractorResource {
 	
 	@GET
 	@Path("/{id}")
-	@Operation(summary = "Get contractor", description = "Get one contractor by ID")
+	@Operation(summary = "Get contractor", description = "Get one contractor by enterprise ID")
 	@APIResponses(value = {
 		@APIResponse(responseCode = "200", description = "Success"),
 		@APIResponse(responseCode = "404", description = "Not Found"),
 		@APIResponse(responseCode = "500", description = "Other error")
 	})
 	public ContractorDAO getContractorById(@PathParam("id") String str) {
+		// remove "BE", spaces, dots ...
 		String id = str.replaceAll("\\D", "");
 
 		if (id.isEmpty() || id.length() < 9) {
 			throw new WebApplicationException("ID too short", Response.Status.BAD_REQUEST);
 		}
 
+		// mimic manual form entry
 		FormDAO form = search.getSearchForm(5, 8, "NL");
 		return search.getContractorById(str.replaceAll("\\D", ""), form.getViewState(), 
 				form.getCookies().get("JSESSIONID"), form.getCookies().get("MY_SESSION"),

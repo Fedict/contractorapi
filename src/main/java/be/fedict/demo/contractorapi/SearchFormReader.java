@@ -32,15 +32,11 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
@@ -51,15 +47,15 @@ import javax.ws.rs.ext.Provider;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 /**
- * Parse HTML search form and convert it into a FormDAO object
- * 
+ * Parse HTML search form and convert it into an object
+ *
  * @author Bart Hanssens
- * @see <a href="https://economie.fgov.be/nl/themas/ondernemingen/specifieke-sectoren/kwaliteit-de-bouw/erkenning-van-aannemers">erkenning van aannemers website</a>
+ * @see
+ * <a href="https://economie.fgov.be/nl/themas/ondernemingen/specifieke-sectoren/kwaliteit-de-bouw/erkenning-van-aannemers">erkenning
+ * van aannemers website</a>
  */
 @Provider
 @Consumes(MediaType.TEXT_HTML)
@@ -71,22 +67,22 @@ public class SearchFormReader implements MessageBodyReader<FormDAO> {
 	}
 
 	@Override
-	public FormDAO readFrom(Class<FormDAO> type, Type genericType, Annotation[] antns, MediaType mt, 
-							MultivaluedMap<String, String> headers, InputStream in) throws IOException, WebApplicationException {
+	public FormDAO readFrom(Class<FormDAO> type, Type genericType, Annotation[] antns, MediaType mt,
+		MultivaluedMap<String, String> headers, InputStream in) throws IOException, WebApplicationException {
 		return parseForm(in, headers);
 	}
-	
+
 	/**
-	 * The HTML result table should contain exactly 1 row if a result was found, or an empty table.
-	 * 
-	 * @param in
-	 * @return
-	 * @throws IOException 
+	 * Parse the webform to obtain cookies, session IDs etc.
+	 *
+	 * @param html form as HTML
+	 * @return form object
+	 * @throws IOException
 	 */
-	private FormDAO parseForm(InputStream in, MultivaluedMap<String, String> headers) throws IOException, WebApplicationException {
+	private FormDAO parseForm(InputStream html, MultivaluedMap<String, String> headers) throws IOException, WebApplicationException {
 		FormDAO form = new FormDAO();
 
-		Document doc = Jsoup.parse(in, StandardCharsets.UTF_8.toString(), "");
+		Document doc = Jsoup.parse(html, StandardCharsets.UTF_8.toString(), "");
 
 		Elements inputs = doc.select("input[name='javax.faces.ViewState']");
 		if (inputs == null || inputs.isEmpty()) {
@@ -96,8 +92,8 @@ public class SearchFormReader implements MessageBodyReader<FormDAO> {
 		if (vals == null || vals.isEmpty()) {
 			throw new WebApplicationException("No cookie found");
 		}
-		Map<String, Cookie> cookies = vals.stream().map(Cookie::valueOf).collect(Collectors.toMap(c -> c.getName(), c -> c)); 
-	
+		Map<String, Cookie> cookies = vals.stream().map(Cookie::valueOf).collect(Collectors.toMap(c -> c.getName(), c -> c));
+
 		form.setViewState(inputs.first().val());
 		form.setCookies(cookies);
 

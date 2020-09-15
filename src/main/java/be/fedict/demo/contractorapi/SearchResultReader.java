@@ -53,7 +53,8 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 /**
- * Parse HTML result page and convert it into a ContractorDAO object
+ * Parse the search result and convert it into an object. 
+ * Note that the result is not a full HTML page, but an HTML table embedded in XML which is normally rendered by a browser.
  * 
  * @author Bart Hanssens
  * @see <a href="https://economie.fgov.be/nl/themas/ondernemingen/specifieke-sectoren/kwaliteit-de-bouw/erkenning-van-aannemers">erkenning van aannemers website</a>
@@ -91,27 +92,28 @@ public class SearchResultReader implements MessageBodyReader<ContractorDAO> {
 	}
 
 	/**
-	 * The HTML result table should contain exactly 1 row if a result was found, or an empty table.
+	 * Parse the XML response which contains an HTML table with exactly 1 row if a result was found, or an empty table.
 	 * 
-	 * @param in
+	 * @param xml
 	 * @return
 	 * @throws IOException 
 	 */
-	private ContractorDAO parseOrganization(InputStream in) throws IOException, WebApplicationException {
+	private ContractorDAO parseOrganization(InputStream xml) throws IOException, WebApplicationException {
 		ContractorDAO contractor = new ContractorDAO();
 
-		Document xmlDoc = Jsoup.parse(in, StandardCharsets.UTF_8.toString(), "", Parser.xmlParser());
+		Document xmlDoc = Jsoup.parse(xml, StandardCharsets.UTF_8.toString(), "", Parser.xmlParser());
 		if (xmlDoc == null) {
-			throw new WebApplicationException("Could not process XML result");
+			throw new WebApplicationException("Could not process XML update response");
 		}
 
 		Elements updates = xmlDoc.select("update");
 		if (updates == null || updates.isEmpty()){
-			throw new WebApplicationException("No update found");
+			throw new WebApplicationException("No update element found");
 		}
 		String cdata = updates.first().text();
 		Document doc = Jsoup.parse(cdata);
 		
+		// search for the results in the HTML table
 		Elements headrow = doc.select("thead[id='mainForm:dataTab_head'] tr");
 		if (headrow == null || headrow.size() != 1) {
 			throw new WebApplicationException("No header row");
@@ -120,7 +122,7 @@ public class SearchResultReader implements MessageBodyReader<ContractorDAO> {
 		if (headers == null || headers.isEmpty()) {
 			throw new WebApplicationException("No headers in table");
 		}
-
+		// check if returned table headers match expected headers 
 		String collected = headers.stream().map(Element::text).collect(Collectors.joining(","));
 		if (HEADERS.compareToIgnoreCase(collected) != 0) {
 			throw new WebApplicationException("Unknown headers");			
