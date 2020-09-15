@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<partial-response><changes><update id="mainForm:dataTab">
+<partial-response>
+	<changes>
+		<update id="mainForm:dataTab">
 <![CDATA[<thead id="mainForm:dataTab_head">
 				<tr>
 					<th>KBO nummer</th>
@@ -28,4 +30,6 @@
 					<td>A (2)</td>
 				</tr>
 			</tbody>
-]]></update></changes></partial-response>
+]]></update>
+	</changes>
+</partial-response>

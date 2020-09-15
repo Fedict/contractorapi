@@ -44,12 +44,19 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
 
 /**
- *
+ * Mimic server
+ * 
  * @author Bart Hanssens
  */
 public class WiremockContractors implements QuarkusTestResourceLifecycleManager {
 	private WireMockServer server;	
 
+	/**
+	 * Read from file (in resource bundle)
+	 * 
+	 * @param name
+	 * @return 
+	 */
 	private String getAsString(String name) {
 		try {
 			return IOUtils.toString(

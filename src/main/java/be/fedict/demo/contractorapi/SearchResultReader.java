@@ -130,12 +130,17 @@ public class SearchResultReader implements MessageBodyReader<ContractorDAO> {
 
 		Elements rows = doc.select("tbody[id='mainForm:dataTab_data'] tr");
 		if (rows == null || rows.size() != 1) {
-			throw new NotFoundException("Expected exactly 1 result");
+			throw new WebApplicationException("Expected exactly 1 result");
 		}
 
 		Element row = rows.first();
 		Elements columns = row.getElementsByTag("td");
-		if (columns == null || columns.size() != 10) {
+		// a "not found" with colspan 10 will be returned when there is no search result
+		if (columns == null || columns.size() == 1) {
+			throw new NotFoundException("Not found");
+		}
+
+		if (columns.size() != 10) {
 			throw new WebApplicationException("Expected 10 columns in result");			
 		}
 		contractor.setCbeId(columns.get(0).text().replace("ui-button", ""));
