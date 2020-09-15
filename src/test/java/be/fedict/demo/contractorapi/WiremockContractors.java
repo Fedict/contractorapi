@@ -26,11 +26,16 @@
 package be.fedict.demo.contractorapi;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
-import com.github.tomakehurst.wiremock.matching.ContainsPattern;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import com.github.tomakehurst.wiremock.matching.ContainsPattern;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 
@@ -72,24 +77,29 @@ public class WiremockContractors implements QuarkusTestResourceLifecycleManager 
 		server.start();
 
 		String path = "/weblists/dataDisplay.xhtml";
+		stubFor(get(urlPathEqualTo(path))
+						.willReturn(ok(getAsString("form.html"))
+							.withHeader(HttpHeaders.SET_COOKIE, "JSESSIONID=123; MYSESSION=abc")
+							.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML)));
+	
 		stubFor(post(path)
-					.withRequestBody(new ContainsPattern("0123456789"))
+					.withRequestBody(containing("0123456789"))
 					.willReturn(ok(getAsString("/found.xml"))
-									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
+									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML))
 		);
 
 		stubFor(post(path)
-					.withRequestBody(new ContainsPattern("000000000"))
+					.withRequestBody(containing("9000800700"))
 					.willReturn(ok(getAsString("/notfound.xml"))
-									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML))
+									.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML))
 		);
 
 		stubFor(post(path)
-					.withRequestBody(new ContainsPattern("987"))
+					.withRequestBody(containing("987"))
 					.willReturn(badRequest())
 		);
 
-		return Collections.singletonMap("be.fedict.demo.contractorapi.ContractorSearch/mp-rest/url", server.baseUrl());
+		return Collections.singletonMap("be.fedict.demo.contractorapi.Search/mp-rest/url", server.baseUrl());
 	}
 
 	@Override

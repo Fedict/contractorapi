@@ -2,18 +2,19 @@
 <partial-response>
 	<changes>
 		<update id="mainForm:dataTab">
-<![CDATA[<thead id="mainForm:dataTab_head">
+<![CDATA[<table>
+			<thead id="mainForm:dataTab_head">
 				<tr>
-					<th>KBO nummer</th>
-					<th>BTW nummer</th>
-					<th>aannemer</th>
-					<th>Erkenningsnummer</th>
-					<th>straat</th>
-					<th>Postcode</th>
-					<th>Gemeente</th>
-					<th>Beslissingsdatum</th>
-					<th>vervaldatum</th>
-					<th>categorie klassen</th>
+					<th><span class='ui-column-title'>KBO nummer</span></th>
+					<th><span class='ui-column-title'>BTW nummer</span></th>
+					<th><span class='ui-column-title'>aannemer</span></th>
+					<th><span class='ui-column-title'>Erkenningsnummer</span></th>
+					<th><span class='ui-column-title'>straat</span></th>
+					<th><span class='ui-column-title'>Postcode</span></th>
+					<th><span class='ui-column-title'>Gemeente</span></th>
+					<th><span class='ui-column-title'>Beslissingsdatum</span></th>
+					<th><span class='ui-column-title'>vervaldatum</span></th>
+					<th><span class='ui-column-title'>categorie klassen</span></th>
 				</tr>
 			</thead>
 			<tbody id="mainForm:dataTab_data">
@@ -30,6 +31,7 @@
 					<td>A (2)</td>
 				</tr>
 			</tbody>
+		</table>
 ]]></update>
 	</changes>
 </partial-response>

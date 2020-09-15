@@ -112,16 +112,20 @@ public class SearchResultReader implements MessageBodyReader<ContractorDAO> {
 		}
 		String cdata = updates.first().text();
 		Document doc = Jsoup.parse(cdata);
-		
-		// search for the results in the HTML table
+		if (doc == null) {
+			throw new WebApplicationException("Could not process partial HTML");
+		}
+
 		Elements headrow = doc.select("thead[id='mainForm:dataTab_head'] tr");
 		if (headrow == null || headrow.size() != 1) {
 			throw new WebApplicationException("No header row");
 		}
+
 		Elements headers = headrow.select("th span[class='ui-column-title']");
 		if (headers == null || headers.isEmpty()) {
 			throw new WebApplicationException("No headers in table");
 		}
+
 		// check if returned table headers match expected headers 
 		String collected = headers.stream().map(Element::text).collect(Collectors.joining(","));
 		if (HEADERS.compareToIgnoreCase(collected) != 0) {

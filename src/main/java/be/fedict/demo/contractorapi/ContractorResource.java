@@ -66,14 +66,13 @@ public class ContractorResource {
 	public ContractorDAO getContractorById(@PathParam("id") String str) {
 		// remove "BE", spaces, dots ...
 		String id = str.replaceAll("\\D", "");
-
 		if (id.isEmpty() || id.length() < 9) {
 			throw new WebApplicationException("ID too short", Response.Status.BAD_REQUEST);
 		}
 
 		// mimic manual form entry
 		FormDAO form = search.getSearchForm(5, 8, "NL");
-		return search.getContractorById(str.replaceAll("\\D", ""), form.getViewState(), 
+		return search.getContractorById(id, form.getViewState(), 
 				form.getCookies().get("JSESSIONID"), form.getCookies().get("MY_SESSION"),
 				true, "mainForm:searchButton", "@all", "mainForm:dataTab","mainForm:searchButton", 1);
     }

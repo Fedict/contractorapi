@@ -88,6 +88,7 @@ public class SearchFormReader implements MessageBodyReader<FormDAO> {
 		if (inputs == null || inputs.isEmpty()) {
 			throw new WebApplicationException("No viewstate found");
 		}
+
 		List<String> vals = headers.get(HttpHeaders.SET_COOKIE);
 		if (vals == null || vals.isEmpty()) {
 			throw new WebApplicationException("No cookie found");

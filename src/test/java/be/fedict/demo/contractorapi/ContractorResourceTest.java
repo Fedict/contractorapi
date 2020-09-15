@@ -53,7 +53,7 @@ public class ContractorResourceTest  {
 	@Test
 	public void testNotFound() {
 		given()
-			.when().get("/contractor/0000.000.000")
+			.when().get("/contractor/9000.800.700")
 			.then().statusCode(Response.SC_NOT_FOUND);
 	}
 	
