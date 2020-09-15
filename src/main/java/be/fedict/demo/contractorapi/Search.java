@@ -57,7 +57,7 @@ public interface Search {
 
 	@POST
 	@Path("/weblists/dataDisplay.xhtml")
-	@Produces(MediaType.TEXT_XML)
+	@Produces(MediaType.TEXT_HTML)
 	@ClientHeaderParam(name="Faces-Request", value="partial/ajax")
 	public ContractorDAO getContractorById(@FormParam("mainForm:crit1465:crit767") String id,
 											@FormParam("javax.faces.ViewState") String viewState,
