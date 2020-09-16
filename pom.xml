@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>be.rovin.opendata</groupId>
+	<groupId>be.fedict.demo</groupId>
 	<artifactId>contractorapi</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
+	<name>Contractor API</name>
+    <description>Demo on converting the contractor search page into an API. </description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
@@ -44,9 +46,10 @@
 					</from>
 					<to>
 						<image>barthanssens/contractorapi:latest</image>
+						<credHelper>wincred</credHelper>
 					</to>
 					<container>
-						<mainClass>be.rovin.opendata.contractorapi.Main</mainClass>
+						<mainClass>io.quarkus.runner.GeneratedMain</mainClass>
 					</container>
 				</configuration>
 			</plugin>
@@ -81,7 +84,6 @@
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-smallrye-openapi</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-rest-client</artifactId>
@@ -107,6 +109,4 @@
 			<scope>test</scope>
 		</dependency>
     </dependencies>
-    <name>Contractor API</name>
-    <description>Demo on converting the contractor search page into an API. </description>
 </project>
